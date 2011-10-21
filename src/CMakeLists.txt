@@ -1,7 +1,6 @@
 rock_library(dsp_acoustics
-    SOURCES Dummy.cpp
-    HEADERS Dummy.hpp)
+    SOURCES empty.cpp
+    HEADERS FitPolynom.h FIRFilter.h)
 
-rock_executable(dsp_acoustics_bin Main.cpp
-    DEPS dsp_acoustics)
+
 
