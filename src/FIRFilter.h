@@ -227,6 +227,121 @@ namespace dsp
                 result.push_back(it_min2);
             }
         }
+        
+    /**
+     * This weights the negativ slope, positive slope will be set to zero.
+     */
+    template<class InputIterator, class OutputIterator>
+        void enforceNegativeSlope(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
+        {
+            unsigned int half_window_size = window_size * 0.5;
+            for(unsigned int i = 0; i < half_window_size; i++)
+            {
+                *result = 0;
+                result++;
+            }
+            
+            InputIterator window_start = first;
+            InputIterator window_end = first + half_window_size * 2;
+            while(window_end != last)
+            {
+                *result = ((*window_end - *window_start) < 0.0) ? (*window_end - *window_start) * -1.0 : 0;
+                window_start++;
+                window_end++;
+                result++;
+            }
+            
+            for(unsigned int i = 0; i < half_window_size; i++)
+            {
+                *result = 0;
+                result++;
+            }
+        }
+    
+    /**
+     * This weights the positive slope, negative slope will be set to zero.
+     */
+    template<class InputIterator, class OutputIterator>
+        void enforcePositiveSlope(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
+        {
+            unsigned int half_window_size = window_size * 0.5;
+            for(unsigned int i = 0; i < half_window_size; i++)
+            {
+                *result = 0;
+                result++;
+            }
+            
+            InputIterator window_start = first;
+            InputIterator window_end = first + half_window_size * 2;
+            while(window_end != last)
+            {
+                *result = ((*window_end - *window_start) > 0.0) ? (*window_end - *window_start) : 0;
+                window_start++;
+                window_end++;
+                result++;
+            }
+            
+            for(unsigned int i = 0; i < half_window_size; i++)
+            {
+                *result = 0;
+                result++;
+            }
+        }
+    
+    /**
+     * This subtracts signal2 from signal1.
+     */
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void subtractSignal(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
+                            OutputIterator result, AccumulatorType upper_limit, AccumulatorType lower_limit)
+        {
+            while(signal1_first != signal1_last && signal2_first != signal2_last)
+            {
+                *result = *signal1_first - *signal2_first;
+                if(*result > upper_limit)
+                    *result = upper_limit;
+                else if(*result < lower_limit)
+                    *result = lower_limit;
+                result++;
+                signal1_first++;
+                signal2_first++;
+            }
+        }
+        
+    /**
+     * This adds signal2 to signal1.
+     */
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void addSignal(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
+                            OutputIterator result, AccumulatorType upper_limit, AccumulatorType lower_limit)
+        {
+            while(signal1_first != signal1_last && signal2_first != signal2_last)
+            {
+                *result = *signal1_first + *signal2_first;
+                if(*result > upper_limit)
+                    *result = upper_limit;
+                else if(*result < lower_limit)
+                    *result = lower_limit;
+                result++;
+                signal1_first++;
+                signal2_first++;
+            }
+        }
+    
+    /**
+     * This squares every element of the signal
+     */
+    template<class InputIterator, class OutputIterator>
+        void squareSignal(InputIterator first, InputIterator last, OutputIterator result, double exponent)
+        {
+            while(first != last)
+            {
+                *result = pow(*first, exponent);
+                result++;
+                first++;
+            }
+        }
+    
 };
 
 #endif

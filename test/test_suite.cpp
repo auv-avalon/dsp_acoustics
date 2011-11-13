@@ -292,3 +292,168 @@ BOOST_AUTO_TEST_CASE(test_find_local_min_max5)
   BOOST_CHECK_EQUAL(79,*result[1]);
   BOOST_CHECK_EQUAL(8,*result[2]);
 }
+
+//test if enforceNegativeSlope is working
+BOOST_AUTO_TEST_CASE(test_enforce_negative_slope)
+{
+    std::vector<float> values;
+    values.push_back(1);
+    values.push_back(4);
+    values.push_back(8);
+    values.push_back(10);
+    values.push_back(7);
+    values.push_back(5);
+    values.push_back(2);
+    values.push_back(1);
+    
+    std::vector<float> result(values.size());
+    dsp::enforceNegativeSlope< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2);
+    BOOST_CHECK_EQUAL(result.size(),values.size());
+    BOOST_CHECK_EQUAL(result[0],0);
+    BOOST_CHECK_EQUAL(result[1],0);
+    BOOST_CHECK_EQUAL(result[2],0);
+    BOOST_CHECK(result[3] > 0);
+    BOOST_CHECK(result[4] > 0);
+    BOOST_CHECK(result[5] > 0);
+    BOOST_CHECK(result[6] > 0);
+    BOOST_CHECK_EQUAL(result[7],0);
+}
+
+//test if enforcePositveSlope is working
+BOOST_AUTO_TEST_CASE(test_enforce_positive_slope)
+{
+    std::vector<float> values;
+    values.push_back(1);
+    values.push_back(4);
+    values.push_back(8);
+    values.push_back(10);
+    values.push_back(7);
+    values.push_back(5);
+    values.push_back(2);
+    values.push_back(1);
+    
+    std::vector<float> result(values.size());
+    dsp::enforcePositiveSlope< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2);
+    BOOST_CHECK_EQUAL(result.size(),values.size());
+    BOOST_CHECK_EQUAL(result[0],0);
+    BOOST_CHECK(result[1] > 0);
+    BOOST_CHECK(result[2] > 0);
+    BOOST_CHECK_EQUAL(result[3],0);
+    BOOST_CHECK_EQUAL(result[4],0);
+    BOOST_CHECK_EQUAL(result[5],0);
+    BOOST_CHECK_EQUAL(result[6],0);
+    BOOST_CHECK_EQUAL(result[7],0);
+}
+
+//test if substract signal is working
+BOOST_AUTO_TEST_CASE(test_subtract_signal)
+{
+    std::vector<float> values1;
+    values1.push_back(1);
+    values1.push_back(2);
+    values1.push_back(3);
+    values1.push_back(4);
+    
+    std::vector<float> values2;
+    values2.push_back(5);
+    values2.push_back(-2);
+    values2.push_back(-8);
+    values2.push_back(0);
+   
+    std::vector<float> result(values1.size());
+    dsp::subtractSignal<std::vector<float>::const_iterator, std::vector<float>::iterator,float>(
+        values1.begin(), values1.end(), values2.begin(), values2.end(), result.begin(), 20, -10);
+    BOOST_CHECK_EQUAL(result.size(),values1.size());
+    BOOST_CHECK_EQUAL(result[0],-4);
+    BOOST_CHECK_EQUAL(result[1],4);
+    BOOST_CHECK_EQUAL(result[2],11);
+    BOOST_CHECK_EQUAL(result[3],4);
+    
+    values2.pop_back();
+    values2.pop_back();
+    result.resize(values2.size());
+    dsp::subtractSignal<std::vector<float>::const_iterator, std::vector<float>::iterator,float>(
+        values1.begin(), values1.end(), values2.begin(), values2.end(), result.begin(), 2, 0);
+    BOOST_CHECK_EQUAL(result.size(),values2.size());
+    BOOST_CHECK_EQUAL(result[0],0);
+    BOOST_CHECK_EQUAL(result[1],2);
+    
+    dsp::subtractSignal<std::vector<float>::const_iterator, std::vector<float>::iterator,float>(
+        values2.begin(), values2.end(), values1.begin(), values1.end(), result.begin(), 0, -2);
+    BOOST_CHECK_EQUAL(result.size(),values2.size());
+    BOOST_CHECK_EQUAL(result[0],0);
+    BOOST_CHECK_EQUAL(result[1],-2);
+}
+
+//test if add signal is working
+BOOST_AUTO_TEST_CASE(test_add_signal)
+{
+    std::vector<float> values1;
+    values1.push_back(1);
+    values1.push_back(2);
+    values1.push_back(3);
+    values1.push_back(4);
+    
+    std::vector<float> values2;
+    values2.push_back(5);
+    values2.push_back(-8);
+    values2.push_back(-2);
+    values2.push_back(0);
+   
+    std::vector<float> result(values1.size());
+    dsp::addSignal<std::vector<float>::const_iterator, std::vector<float>::iterator,float>(
+        values1.begin(), values1.end(), values2.begin(), values2.end(), result.begin(), 10, -10);
+    BOOST_CHECK_EQUAL(result.size(),values1.size());
+    BOOST_CHECK_EQUAL(result[0],6);
+    BOOST_CHECK_EQUAL(result[1],-6);
+    BOOST_CHECK_EQUAL(result[2],1);
+    BOOST_CHECK_EQUAL(result[3],4);
+    
+    values2.pop_back();
+    values2.pop_back();
+    result.resize(values2.size());
+    dsp::addSignal<std::vector<float>::const_iterator, std::vector<float>::iterator,float>(
+        values1.begin(), values1.end(), values2.begin(), values2.end(), result.begin(), 3, 0);
+    BOOST_CHECK_EQUAL(result.size(),values2.size());
+    BOOST_CHECK_EQUAL(result[0],3);
+    BOOST_CHECK_EQUAL(result[1],0);
+    
+    dsp::addSignal<std::vector<float>::const_iterator, std::vector<float>::iterator,float>(
+        values2.begin(), values2.end(), values1.begin(), values1.end(), result.begin(), 0, -3);
+    BOOST_CHECK_EQUAL(result.size(),values2.size());
+    BOOST_CHECK_EQUAL(result[0],0);
+    BOOST_CHECK_EQUAL(result[1],-3);
+}
+
+//test if square signal is working
+BOOST_AUTO_TEST_CASE(test_square_signal)
+{
+    std::vector<float> values;
+    values.push_back(1);
+    values.push_back(-4);
+    values.push_back(8);
+    values.push_back(-10);
+    values.push_back(0);
+    
+    std::vector<float> result(values.size());
+    dsp::squareSignal<std::vector<float>::const_iterator, std::vector<float>::iterator>(values.begin(),values.end(),result.begin(),2);
+    BOOST_CHECK_EQUAL(result.size(),values.size());
+    BOOST_CHECK_EQUAL(result[0],1);
+    BOOST_CHECK_EQUAL(result[1],16);
+    BOOST_CHECK_EQUAL(result[2],64);
+    BOOST_CHECK_EQUAL(result[3],100);
+    BOOST_CHECK_EQUAL(result[4],0);
+    
+    values.clear();
+    values.push_back(64);
+    values.push_back(9);
+    values.push_back(1);
+    values.push_back(0);
+    result.resize(values.size());
+    dsp::squareSignal<std::vector<float>::const_iterator, std::vector<float>::iterator>(values.begin(),values.end(),result.begin(),0.5);
+    BOOST_CHECK_EQUAL(result.size(),values.size());
+    BOOST_CHECK_EQUAL(result[0],8);
+    BOOST_CHECK_EQUAL(result[1],3);
+    BOOST_CHECK_EQUAL(result[2],1);
+    BOOST_CHECK_EQUAL(result[3],0);
+}
