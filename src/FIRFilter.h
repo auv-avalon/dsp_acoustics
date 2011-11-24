@@ -259,6 +259,61 @@ namespace dsp
             }
         }
         
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void accumulateSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType normalized_limit)
+        {
+            InputIterator it = first;
+            AccumulatorType sum = *it;
+            while(it != last)
+            {
+                it++;
+                sum += *it;
+            }
+            it = first;
+            while(it != last)
+            {
+                if(it == first)
+                {
+                    *result = (*it / sum) * normalized_limit;
+                }
+                else
+                {
+                    *result = *(result - 1) + (*it / sum) * normalized_limit;
+                }
+                result++;
+                it++;
+            }
+        }
+        
+    template<class InputIterator, class OutputIterator>
+        void invertSignal(InputIterator first, InputIterator last, OutputIterator result)
+        {
+            while(first != last)
+            {
+                *result = *first * -1.0;
+                result++;
+                first++;
+            }
+        }
+        
+    template<class InputIterator, class OutputIterator>
+        void flipSignal(InputIterator first, InputIterator last, OutputIterator result)
+        {
+            if(first == result)
+                throw std::runtime_error("flipSignal won't work with same iterator for input and output!");
+                
+            InputIterator it = last;
+            it--;
+            while(it != first)
+            {
+                *result = *it;
+                result++;
+                it--;
+            }
+            *result = *first;
+        }
+        
+        
     /**
      * This weights the negativ level difference, positive slope will be set to zero.
      */
@@ -380,7 +435,54 @@ namespace dsp
                 first++;
             }
         }
+        
     
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void applyFunction(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType (*function)(AccumulatorType))
+        {
+            while(first != last)
+            {
+                *result = function(*first);
+                result++;
+                first++;
+            }
+        }
+    
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void subtractFunctionFromSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType (*function)(AccumulatorType),
+                                        AccumulatorType upper_limit, AccumulatorType lower_limit)
+        {
+            int i = 0;
+            while(first != last)
+            {
+                *result = *first - function((AccumulatorType)i);
+                if(*result > upper_limit)
+                    *result = upper_limit;
+                else if(*result < lower_limit)
+                    *result = lower_limit;
+                i++;
+                first++;
+                result++;
+            }
+        }
+        
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void addFunctionToSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType (*function)(AccumulatorType),
+                                        AccumulatorType upper_limit, AccumulatorType lower_limit)
+        {
+            int i = 0;
+            while(first != last)
+            {
+                *result = *first + function((AccumulatorType)i);
+                if(*result > upper_limit)
+                    *result = upper_limit;
+                else if(*result < lower_limit)
+                    *result = lower_limit;
+                i++;
+                first++;
+                result++;
+            }
+        }
 };
 
 #endif
