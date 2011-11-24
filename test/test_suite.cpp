@@ -293,6 +293,31 @@ BOOST_AUTO_TEST_CASE(test_find_local_min_max5)
   BOOST_CHECK_EQUAL(8,*result[2]);
 }
 
+//test if create derivative is working
+BOOST_AUTO_TEST_CASE(test_create_derivative)
+{
+    std::vector<float> values;
+    values.push_back(1);
+    values.push_back(4);
+    values.push_back(8);
+    values.push_back(10);
+    values.push_back(7);
+    values.push_back(5);
+    values.push_back(2);
+    values.push_back(1);
+    
+    std::vector<float> result(values.size());
+    dsp::derivativeSignal< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2,1);
+    BOOST_CHECK_EQUAL(result[0],1.5);
+    BOOST_CHECK_EQUAL(result[1],3.5);
+    BOOST_CHECK_EQUAL(result[2],3);
+    BOOST_CHECK_EQUAL(result[3],-0.5);
+    BOOST_CHECK_EQUAL(result[4],-2.5);
+    BOOST_CHECK_EQUAL(result[5],-2.5);
+    BOOST_CHECK_EQUAL(result[6],-2);
+    BOOST_CHECK_EQUAL(result[7],-0.5);
+}
+
 //test if enforceNegativeSlope is working
 BOOST_AUTO_TEST_CASE(test_enforce_negative_slope)
 {

@@ -228,6 +228,37 @@ namespace dsp
             }
         }
         
+    template<class InputIterator, class OutputIterator>
+        void derivativeSignal(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size = 2, float resolution = 1)
+        {
+            if(first == result)
+                throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
+                
+            unsigned int half_window_size = window_size * 0.5;
+            
+            InputIterator window_begin = first;
+            InputIterator window_end = first + half_window_size;
+            while(first != last)
+            {
+                *result = (*window_end - *window_begin) / (half_window_size * 2 * resolution);
+                if(window_begin + half_window_size > first)
+                {
+                    window_end++;
+                }
+                else if(window_end + 1 >= last)
+                {
+                    window_begin++;
+                }
+                else
+                {
+                    window_begin++;
+                    window_end++;
+                }
+                result++;
+                first++;
+            }
+        }
+        
     /**
      * This weights the negativ level difference, positive slope will be set to zero.
      */
