@@ -229,62 +229,70 @@ namespace dsp
         }
         
     /**
-     * This weights the negativ slope, positive slope will be set to zero.
+     * This weights the negativ level difference, positive slope will be set to zero.
      */
     template<class InputIterator, class OutputIterator>
-        void enforceNegativeSlope(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
+        void enforceNegativeDifference(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
         {
+            if(first == result)
+                throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
+                
             unsigned int half_window_size = window_size * 0.5;
-            for(unsigned int i = 0; i < half_window_size; i++)
-            {
-                *result = 0;
-                result++;
-            }
             
-            InputIterator window_start = first;
-            InputIterator window_end = first + half_window_size * 2;
-            while(window_end != last)
+            InputIterator window_begin = first;
+            InputIterator window_end = first + half_window_size;
+            while(first != last)
             {
-                *result = ((*window_end - *window_start) < 0.0) ? (*window_end - *window_start) * -1.0 : 0;
-                window_start++;
-                window_end++;
+                *result = (*window_end - *window_begin) < 0.0 ? (*window_end - *window_begin) * -1.0 : 0;
+                if(window_begin + half_window_size > first)
+                {
+                    window_end++;
+                }
+                else if(window_end + 1 >= last)
+                {
+                    window_begin++;
+                }
+                else
+                {
+                    window_begin++;
+                    window_end++;
+                }
                 result++;
-            }
-            
-            for(unsigned int i = 0; i < half_window_size; i++)
-            {
-                *result = 0;
-                result++;
+                first++;
             }
         }
-    
+        
     /**
-     * This weights the positive slope, negative slope will be set to zero.
+     * This weights the positive level difference, negative slope will be set to zero.
      */
     template<class InputIterator, class OutputIterator>
-        void enforcePositiveSlope(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
+        void enforcePositiveDifference(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
         {
+            if(first == result)
+                throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
+                
             unsigned int half_window_size = window_size * 0.5;
-            for(unsigned int i = 0; i < half_window_size; i++)
-            {
-                *result = 0;
-                result++;
-            }
             
-            InputIterator window_start = first;
-            InputIterator window_end = first + half_window_size * 2;
-            while(window_end != last)
+            InputIterator window_begin = first;
+            InputIterator window_end = first + half_window_size;
+            while(first != last)
             {
-                *result = ((*window_end - *window_start) > 0.0) ? (*window_end - *window_start) : 0;
-                window_start++;
-                window_end++;
+                *result = ((*window_end - *window_begin) > 0.0) ? (*window_end - *window_begin) : 0;
+                if(window_begin + half_window_size > first)
+                {
+                    window_end++;
+                }
+                else if(window_end + 1 >= last)
+                {
+                    window_begin++;
+                }
+                else
+                {
+                    window_begin++;
+                    window_end++;
+                }
                 result++;
-            }
-            
-            for(unsigned int i = 0; i < half_window_size; i++)
-            {
-                *result = 0;
-                result++;
+                first++;
             }
         }
     

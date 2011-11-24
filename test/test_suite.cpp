@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(test_enforce_negative_slope)
     values.push_back(1);
     
     std::vector<float> result(values.size());
-    dsp::enforceNegativeSlope< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2);
+    dsp::enforceNegativeDifference< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2);
     BOOST_CHECK_EQUAL(result.size(),values.size());
     BOOST_CHECK_EQUAL(result[0],0);
     BOOST_CHECK_EQUAL(result[1],0);
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE(test_enforce_negative_slope)
     BOOST_CHECK(result[4] > 0);
     BOOST_CHECK(result[5] > 0);
     BOOST_CHECK(result[6] > 0);
-    BOOST_CHECK_EQUAL(result[7],0);
+    BOOST_CHECK(result[7] > 0);
 }
 
 //test if enforcePositveSlope is working
@@ -333,9 +333,9 @@ BOOST_AUTO_TEST_CASE(test_enforce_positive_slope)
     values.push_back(1);
     
     std::vector<float> result(values.size());
-    dsp::enforcePositiveSlope< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2);
+    dsp::enforcePositiveDifference< std::vector<float>::const_iterator, std::vector<float>::iterator >(values.begin(),values.end(),result.begin(),2);
     BOOST_CHECK_EQUAL(result.size(),values.size());
-    BOOST_CHECK_EQUAL(result[0],0);
+    BOOST_CHECK(result[0] > 0);
     BOOST_CHECK(result[1] > 0);
     BOOST_CHECK(result[2] > 0);
     BOOST_CHECK_EQUAL(result[3],0);
