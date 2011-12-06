@@ -228,6 +228,26 @@ namespace dsp
             }
         }
         
+    
+    template<class InputIterator, class OutputIterator>
+        InputIterator findFirstRightLocalMin(InputIterator first, InputIterator last, unsigned int window_size = 2)
+        {
+            InputIterator result = first;
+            InputIterator window_begin = first;
+            InputIterator window_end = first + window_size;
+            while(window_end != last)
+            {
+                if(*window_begin < *window_end)
+                    break;
+                
+                if(*result > *window_end)
+                    result = window_end;
+                
+                window_begin++;
+                window_end++;
+            }
+            return result;
+        }
     template<class InputIterator, class OutputIterator>
         void derivativeSignal(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size = 2, float resolution = 1)
         {
