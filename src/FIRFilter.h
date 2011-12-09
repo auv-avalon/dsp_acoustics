@@ -254,6 +254,41 @@ namespace dsp
         }
 
     /**
+     * Filters the elements proportionally to the average of its values.
+     * @param average returns the average of all values
+     * @param proportional_threshold min threshold in percent of average
+     * @param count_empty_bins count empty bins to build the average
+     */
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void proportionallyThresholdFilter(InputIterator first, InputIterator last, OutputIterator result, 
+                                           AccumulatorType &average_value, float proportional_threshold, bool count_empty_bins = true)
+        {
+            average_value = 0;
+            InputIterator start = first;
+            unsigned int element_count = 0;
+            while(start != last)
+            {
+                average_value += *start;
+                if(count_empty_bins || *start > 0)
+                    element_count++;
+                start++;
+            }
+            average_value = average_value / element_count;
+            
+            AccumulatorType threshold = average_value * proportional_threshold;
+            start = first;
+            while(start != last)
+            {
+                if(*start < threshold)
+                    *result = 0;
+                else
+                    *result = *start;
+                start++;
+                result++;
+            }
+        }
+         
+    /**
      * Creates the derivative of a signal.
      * @param window_size this span is used to get the slope
      * @param resolution allows you to divide the values by a factor. (e.g. 0.1 means 10 entries per meter)
