@@ -292,6 +292,10 @@ namespace dsp
             }
         }
         
+    /**
+     * Accumulates the signal to a normalized limit.
+     * @param normalized_limit
+     */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void accumulateSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType normalized_limit)
         {
@@ -468,6 +472,44 @@ namespace dsp
                     *result = upper_limit;
                 else if(*result < lower_limit)
                     *result = lower_limit;
+                result++;
+                signal1_first++;
+                signal2_first++;
+            }
+        }
+        
+    /**
+     * Returns a signal which is the minimum of both input signals.
+     */
+    template<class InputIterator, class OutputIterator>
+        void minimizeSignals(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
+                            OutputIterator result)
+        {
+            while(signal1_first != signal1_last && signal2_first != signal2_last)
+            {
+                if(std::abs(*signal1_first) < std::abs(*signal2_first))
+                    *result = *signal1_first;
+                else
+                    *result = *signal2_first;
+                result++;
+                signal1_first++;
+                signal2_first++;
+            }
+        }
+        
+    /**
+     * Returns a signal which is the maximum of both input signals.
+     */
+    template<class InputIterator, class OutputIterator>
+        void maximizeSignals(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
+                            OutputIterator result)
+        {
+            while(signal1_first != signal1_last && signal2_first != signal2_last)
+            {
+                if(std::abs(*signal1_first) > std::abs(*signal2_first))
+                    *result = *signal1_first;
+                else
+                    *result = *signal2_first;
                 result++;
                 signal1_first++;
                 signal2_first++;
