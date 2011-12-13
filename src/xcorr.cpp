@@ -98,8 +98,7 @@
         if(_lag > signalHalf ){ // wrap if to high...
            _lag = index - _signalSize ;
         }
-        _lag --;
-        
+
         _correlation = ( max /_signalSize) /  (sqrt(na) * sqrt(nb));
         return _lag;
      }
