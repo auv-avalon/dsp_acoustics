@@ -6,6 +6,7 @@
   <license></license>
   <url>http://</url>
   <logo>http://</logo>
+ <depend package="fftw" />
   <!--
    To add any dependencies use the depend tag
   <depend package="dummy-dependency-0" />
