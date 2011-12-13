@@ -3,10 +3,10 @@
 #define __FIRFILTER_H
 
 #include <math.h>
+#include <cmath>
 #include <vector>
 #include <iterator>
 #include <stdexcept>
-#include <iostream>
 
 namespace dsp
 {
@@ -228,16 +228,20 @@ namespace dsp
             }
         }
         
-    
-    template<class InputIterator, class OutputIterator>
+    /**
+     * Finds the next local minimum to to the right side.
+     * Retruns the first element if the following graph is rising.
+     * @param window_size this span is used to get the slope
+     */
+    template<class InputIterator>
         InputIterator findFirstRightLocalMin(InputIterator first, InputIterator last, unsigned int window_size = 2)
         {
             InputIterator result = first;
             InputIterator window_begin = first;
             InputIterator window_end = first + window_size;
-            while(window_end != last)
+            while(window_end < last)
             {
-                if(*window_begin < *window_end)
+                if(*window_begin <= *window_end)
                     break;
                 
                 if(*result > *window_end)
@@ -248,11 +252,55 @@ namespace dsp
             }
             return result;
         }
+
+    /**
+     * Filters the elements proportionally to the average of its values.
+     * @param average returns the average of all values
+     * @param proportional_threshold min threshold in percent of average
+     * @param count_empty_bins count empty bins to build the average
+     */
+    template<class InputIterator, class OutputIterator, class AccumulatorType>
+        void proportionallyThresholdFilter(InputIterator first, InputIterator last, OutputIterator result, 
+                                           AccumulatorType &average_value, float proportional_threshold, bool count_empty_bins = true)
+        {
+            average_value = 0;
+            InputIterator start = first;
+            unsigned int element_count = 0;
+            while(start != last)
+            {
+                average_value += *start;
+                if(count_empty_bins || *start > 0)
+                    element_count++;
+                start++;
+            }
+            average_value = average_value / element_count;
+            
+            AccumulatorType threshold = average_value * proportional_threshold;
+            start = first;
+            while(start != last)
+            {
+                if(*start < threshold)
+                    *result = 0;
+                else
+                    *result = *start;
+                start++;
+                result++;
+            }
+        }
+         
+    /**
+     * Creates the derivative of a signal.
+     * @param window_size this span is used to get the slope
+     * @param resolution allows you to divide the values by a factor. (e.g. 0.1 means 10 entries per meter)
+     * @throws runtime_error
+     */
     template<class InputIterator, class OutputIterator>
         void derivativeSignal(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size = 2, float resolution = 1)
         {
             if(first == result)
                 throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
+            if(last - first < window_size)
+                throw std::runtime_error("The input signal should not have less elements than the window_size.");
                 
             unsigned int half_window_size = window_size * 0.5;
             
@@ -279,6 +327,10 @@ namespace dsp
             }
         }
         
+    /**
+     * Accumulates the signal to a normalized limit.
+     * @param normalized_limit
+     */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void accumulateSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType normalized_limit)
         {
@@ -305,6 +357,9 @@ namespace dsp
             }
         }
         
+    /**
+     * Inverts the given signal.
+     */
     template<class InputIterator, class OutputIterator>
         void invertSignal(InputIterator first, InputIterator last, OutputIterator result)
         {
@@ -316,6 +371,10 @@ namespace dsp
             }
         }
         
+    /**
+     * Flips the given signal. The last element will be the first and so on.
+     * @throws runtime_error
+     */
     template<class InputIterator, class OutputIterator>
         void flipSignal(InputIterator first, InputIterator last, OutputIterator result)
         {
@@ -336,12 +395,16 @@ namespace dsp
         
     /**
      * This weights the negativ level difference, positive slope will be set to zero.
+     * @param window_size this span is used to get the slope
+     * @throws runtime_error
      */
     template<class InputIterator, class OutputIterator>
         void enforceNegativeDifference(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
         {
             if(first == result)
                 throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
+            if(last - first < window_size)
+                throw std::runtime_error("The input signal should not have less elements than the window_size.");
                 
             unsigned int half_window_size = window_size * 0.5;
             
@@ -370,12 +433,16 @@ namespace dsp
         
     /**
      * This weights the positive level difference, negative slope will be set to zero.
+     * @param window_size this span is used to get the slope
+     * @throws runtime_error
      */
     template<class InputIterator, class OutputIterator>
         void enforcePositiveDifference(InputIterator first, InputIterator last, OutputIterator result, unsigned int window_size)
         {
             if(first == result)
                 throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
+            if(last - first < window_size)
+                throw std::runtime_error("The input signal should not have less elements than the window_size.");
                 
             unsigned int half_window_size = window_size * 0.5;
             
@@ -404,6 +471,8 @@ namespace dsp
     
     /**
      * This subtracts signal2 from signal1.
+     * @param upper_limit higher values will reduced to this
+     * @param lower_limit smaller values will increased to this.
      */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void subtractSignal(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
@@ -424,6 +493,8 @@ namespace dsp
         
     /**
      * This adds signal2 to signal1.
+     * @param upper_limit higher values will reduced to this
+     * @param lower_limit smaller values will increased to this.
      */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void addSignal(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
@@ -441,9 +512,47 @@ namespace dsp
                 signal2_first++;
             }
         }
+        
+    /**
+     * Returns a signal which is the minimum of both input signals.
+     */
+    template<class InputIterator, class OutputIterator>
+        void minimizeSignals(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
+                            OutputIterator result)
+        {
+            while(signal1_first != signal1_last && signal2_first != signal2_last)
+            {
+                if(std::abs(*signal1_first) < std::abs(*signal2_first))
+                    *result = *signal1_first;
+                else
+                    *result = *signal2_first;
+                result++;
+                signal1_first++;
+                signal2_first++;
+            }
+        }
+        
+    /**
+     * Returns a signal which is the maximum of both input signals.
+     */
+    template<class InputIterator, class OutputIterator>
+        void maximizeSignals(InputIterator signal1_first, InputIterator signal1_last, InputIterator signal2_first, InputIterator signal2_last, 
+                            OutputIterator result)
+        {
+            while(signal1_first != signal1_last && signal2_first != signal2_last)
+            {
+                if(std::abs(*signal1_first) > std::abs(*signal2_first))
+                    *result = *signal1_first;
+                else
+                    *result = *signal2_first;
+                result++;
+                signal1_first++;
+                signal2_first++;
+            }
+        }
     
     /**
-     * This squares every element of the signal
+     * This squares every element of the signal by a given exponent.
      */
     template<class InputIterator, class OutputIterator>
         void squareSignal(InputIterator first, InputIterator last, OutputIterator result, double exponent)
@@ -456,7 +565,9 @@ namespace dsp
             }
         }
         
-    
+    /**
+     * Applies a given function pointer to each element of the signal.
+     */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void applyFunction(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType (*function)(AccumulatorType))
         {
@@ -468,6 +579,11 @@ namespace dsp
             }
         }
     
+    /**
+     * Subtracts a signal, given by a function pointer, from the signal.
+     * @param upper_limit higher values will reduced to this
+     * @param lower_limit smaller values will increased to this.
+     */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void subtractFunctionFromSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType (*function)(AccumulatorType),
                                         AccumulatorType upper_limit, AccumulatorType lower_limit)
@@ -485,7 +601,12 @@ namespace dsp
                 result++;
             }
         }
-        
+       
+    /**
+     * Adds a signal, given by a function pointer, from the signal.
+     * @param upper_limit higher values will reduced to this
+     * @param lower_limit smaller values will increased to this.
+     */
     template<class InputIterator, class OutputIterator, class AccumulatorType>
         void addFunctionToSignal(InputIterator first, InputIterator last, OutputIterator result, AccumulatorType (*function)(AccumulatorType),
                                         AccumulatorType upper_limit, AccumulatorType lower_limit)
