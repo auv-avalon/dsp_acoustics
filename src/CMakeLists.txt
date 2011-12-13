@@ -1,6 +1,6 @@
 rock_library(dsp_acoustics
-    SOURCES empty.cpp
-    HEADERS FitPolynom.h FIRFilter.h)
+    SOURCES empty.cpp xcorr.cpp
+    HEADERS FitPolynom.h FIRFilter.h xcorr.h)
 
 
 
