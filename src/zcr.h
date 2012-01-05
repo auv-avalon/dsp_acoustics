@@ -6,7 +6,7 @@
 * @param T type of data
 * @param data pointer to the date
 * @param size Size of the array
-* @return return the total zeros crossings 
+* @return return the number of zeros crossings
 */
 template<typename T>
 unsigned int zeroCrossingRate( T* data , unsigned int size)  {
@@ -20,9 +20,7 @@ unsigned int zeroCrossingRate( T* data , unsigned int size)  {
     T val = *data;
     for(;start != end;  ){
         ++start;
-        if(val * (*start) < 0 ){
-            ++ret;
-        }
+        ret += (val * (*start) < 0 );
         val = (*start);
     }
     return ret;
