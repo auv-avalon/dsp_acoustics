@@ -31,7 +31,7 @@
         fftw_free( _ifft_result );
     }
  
-    int Xcorr::calculate(const fftw_data_type *ref,const fftw_data_type *sig){
+    int Xcorr::calculate(fftw_data_type *ref,fftw_data_type *sig){
         
         double na=0;
         // not optimmal but well, will maybe optimiezed in the future..

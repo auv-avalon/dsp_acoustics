@@ -30,7 +30,7 @@ class Xcorr{
     public:
     Xcorr(unsigned int signalSize);
     ~Xcorr();
-    int calculate(fftw_data_type *ref,fftw_data_type *sig);
+    int calculate(const fftw_data_type *ref,const fftw_data_type *sig);
     double  getCorrelation(){return _correlation;};
     
     protected:
@@ -40,9 +40,7 @@ class Xcorr{
         double _correlation;
         fftw_complex    *_data1,*_data2, *_fft_result1,*_fft_result2, *_ifft_result;
         fftw_plan       _plan_forward1,_plan_forward2, _plan_backward;    
-        
-    
-    
+       
     
 };
 
