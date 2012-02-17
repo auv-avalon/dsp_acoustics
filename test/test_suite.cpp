@@ -9,6 +9,7 @@
 #include <iostream>
 #include "../src/FIRFilter.h"
 #include "../src/FitPolynom.h"
+#include "../src/ExtractTarget.h"
 #include <algorithm>
 
 
@@ -482,3 +483,41 @@ BOOST_AUTO_TEST_CASE(test_square_signal)
     BOOST_CHECK_EQUAL(result[2],1);
     BOOST_CHECK_EQUAL(result[3],0);
 }
+
+//extractTarget 
+BOOST_AUTO_TEST_CASE(test_extract_target)
+{
+    std::vector<unsigned char> values;
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(3);
+    values.push_back(4);
+    values.push_back(10);
+    values.push_back(10);
+    values.push_back(10);
+    values.push_back(9);
+    values.push_back(9);
+    values.push_back(8);
+    values.push_back(9);
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(2);
+    values.push_back(0);
+    values.push_back(0);
+    values.push_back(10);
+    values.push_back(0);
+    values.push_back(3);
+    values.push_back(0);
+    values.push_back(0);
+
+    int length = 0;
+    int index = 0;
+    dsp::extractTarget<std::vector<unsigned char>::const_iterator,int>(values.begin(),values.end(),4,index,length);
+    BOOST_CHECK_EQUAL(index,6);
+    BOOST_CHECK_EQUAL(length,7);
+}
+
