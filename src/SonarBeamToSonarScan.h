@@ -28,10 +28,10 @@ namespace dsp
             }
 
             //returns true every time a new sonar scan was created from the added sonar beams
-            //otherwise if the sonar scan would not be complete it return false 
+            //otherwise if the sonar scan would not be completed it returns false 
             //
             //a sonar scan is regarded as complete if 360° are reached
-            //or if the scan direction changed 
+            //or if the scan direction changed
             //
             //if copy is set to false the data are being swapped instead
             bool addSonarBeam(base::samples::SonarBeam &sonar_beam,bool copy=true)
