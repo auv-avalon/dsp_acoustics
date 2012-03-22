@@ -278,6 +278,45 @@ BOOST_AUTO_TEST_CASE(test_poly_fit)
   std::cout << "polynomial fit: " << result[0] << " " << result[1] << " " << result[2] << " " << sqrt(chisq) << std::endl ;
 }
 
+//test if polynomial derivation is working
+BOOST_AUTO_TEST_CASE(test_derive_poly)
+{
+  std::vector<double> values;
+  values.push_back(1);
+  values.push_back(2);
+  values.push_back(3);
+
+  std::vector<double> result;
+  dsp::derivePolynom(values,result);
+  BOOST_CHECK_EQUAL(2,result.size());
+  BOOST_CHECK(result[0] == 2.0);
+  BOOST_CHECK(result[1] == 6.0);
+
+  values.resize(1);
+  dsp::derivePolynom(values,result);
+  BOOST_CHECK_EQUAL(1,result.size());
+  BOOST_CHECK(result[0] == 0.0);
+}
+
+//test if calculation of the roots is working
+BOOST_AUTO_TEST_CASE(test_calc_poly_roots)
+{
+  std::vector<double> values;
+  //-6+x+x^2 => 2 and -3
+  values.push_back(-6);
+  values.push_back(1);
+  values.push_back(1);
+
+  std::vector<double> result;
+  dsp::calcPolyRoots(values,result);
+
+  BOOST_CHECK_EQUAL(4,result.size());
+  BOOST_CHECK(result[0] == 2.0);
+  BOOST_CHECK(result[1] == 0.0);
+  BOOST_CHECK(result[2] == -3.0);
+  BOOST_CHECK(result[3] == 0.0);
+}
+
 //test if polynomial fit is working
 BOOST_AUTO_TEST_CASE(test_find_local_min_max5)
 {

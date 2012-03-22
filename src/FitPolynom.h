@@ -11,6 +11,8 @@
 #include <iterator>
 #include <stdexcept>
 #include <iostream>
+#include <gsl/gsl_poly.h>
+
 
 namespace dsp
 {
@@ -19,6 +21,7 @@ namespace dsp
   //Parameters
   //degree  ==> number of returned parameters (order of the polynom + 1)
   //all dereferenced values must be float compatible 
+  //the result will be a vector of coefficients with the highest order at the end
   //TODO 
   //add parameter for number of points to prevent counting them
   template<typename TIter1,typename TIter2>
@@ -94,5 +97,48 @@ namespace dsp
         x.push_back(i);
       return fitPolynom<typename std::vector<float>::iterator,TIter>(degree,x.begin(),x.end(),start_iter,end_iter,result,chisq);
     }
+    
+  template<typename TIter>
+    bool fitPolynom(int degree, TIter start_iter,
+        TIter end_iter,
+        std::vector<double> &result,double &chisq)
+    {
+      //generate x vector
+      std::vector<double> x;
+      TIter iter = start_iter;
+      for(int i=0;iter != end_iter;++i,++iter)
+        x.push_back(i);
+      return fitPolynom<typename std::vector<double>::iterator,TIter>(degree,x.begin(),x.end(),start_iter,end_iter,result,chisq);
+    }
+
+  //calculates the coefficients of a polynomial which is derivation of the given polynomial
+  //the given coefficients must sorted in ascending order (highest order last)
+  template<typename TIter1,typename TIter2>
+    void derivePolynom(TIter1 start_coefficient,TIter2 end_coefficient,TIter2 start_result)
+    {
+        TIter2 result = start_result;
+        ++start_coefficient;
+        for(int i = 1;start_coefficient!= end_coefficient;++start_coefficient,++i,++result)
+            *result = *start_coefficient*i;
+        if(result == start_result)
+            *result = 0;
+    }
+    void derivePolynom(std::vector<double> &coefficients,std::vector<double> &result)
+    {
+        result.resize(std::max(1,(int)coefficients.size()-1));
+        derivePolynom(coefficients.begin(),coefficients.end(),result.begin());
+    }
+
+    //calculates the roots of the polynomial given by the coefficients
+    //coefficients must be in ascending order
+    //the roots are stored as result[2n] = real part, result[2n+1] imaginer part
+    void calcPolyRoots(const std::vector<double> &coefficients,std::vector<double> &roots)
+    {
+        roots.resize((coefficients.size()-1)*2);
+        gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (coefficients.size());
+        gsl_poly_complex_solve (&coefficients[0], coefficients.size(), w, &roots[0]);
+        gsl_poly_complex_workspace_free (w);
+    }
+
 };
 #endif
