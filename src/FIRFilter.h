@@ -37,7 +37,7 @@ namespace dsp
                 window_val += *window_end;
 
             //start filtering and fill the left half of the window
-            for(int i=half_window_size+1;i< window_size && window_end != last;++i,++window_end,++result)
+            for(int i=half_window_size+1;i< (int)window_size && window_end != last;++i,++window_end,++result)
             {
                 *result = window_val/i;
                 window_val += *window_end;
@@ -299,7 +299,7 @@ namespace dsp
         {
             if(first == result)
                 throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
-            if(last - first < window_size)
+            if(last - first < (int)window_size)
                 throw std::runtime_error("The input signal should not have less elements than the window_size.");
                 
             unsigned int half_window_size = window_size * 0.5;
@@ -403,7 +403,7 @@ namespace dsp
         {
             if(first == result)
                 throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
-            if(last - first < window_size)
+            if(last - first <(int) window_size)
                 throw std::runtime_error("The input signal should not have less elements than the window_size.");
                 
             unsigned int half_window_size = window_size * 0.5;
@@ -441,7 +441,7 @@ namespace dsp
         {
             if(first == result)
                 throw std::runtime_error("derivativeSignal won't work with same iterator for input and output!");
-            if(last - first < window_size)
+            if(last - first < (int)window_size)
                 throw std::runtime_error("The input signal should not have less elements than the window_size.");
                 
             unsigned int half_window_size = window_size * 0.5;
