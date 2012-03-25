@@ -9,4 +9,5 @@
  <depend package="fftw" />
  <depend package="libsnd" />
  <depend package="opencv" />
+ <depend package="gsl" />
 </package>
