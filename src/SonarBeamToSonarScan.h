@@ -111,6 +111,12 @@ namespace dsp
                 return result;
             }
 
+            bool addSonarBeam(const base::samples::SonarBeam &sonar_beam)
+            {
+                base::samples::SonarBeam beam = sonar_beam;
+                return addSonarBeam(beam,false);
+            }
+
             //copies the sonar scan into the given one 
             //if copy is set to false the sonar scans are swapped
             void getSonarScan(base::samples::SonarScan &sonar_scan,bool copy=true)

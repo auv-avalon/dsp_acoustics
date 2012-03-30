@@ -24,12 +24,12 @@ namespace dsp
   //the result will be a vector of coefficients with the highest order at the end
   //TODO 
   //add parameter for number of points to prevent counting them
-  template<typename TIter1,typename TIter2>
+  template<typename TIter1,typename TIter2,typename TResult>
     bool fitPolynom(int degree, TIter1 start_iter_x,
         TIter1 end_iter_x,
         TIter2 start_iter_y,
         TIter2 end_iter_y,
-        std::vector<float> &result,
+        std::vector<TResult> &result,
         double &chisq)
     {
       gsl_multifit_linear_workspace *ws;
@@ -84,10 +84,10 @@ namespace dsp
       return true;
     }
 
-  template<typename TIter>
+  template<typename TIter,typename TResult>
     bool fitPolynom(int degree, TIter start_iter,
         TIter end_iter,
-        std::vector<float> &result,double &chisq)
+        std::vector<TResult> &result,double &chisq)
     {
       //generate x vector
       std::vector<float> x;
@@ -95,22 +95,9 @@ namespace dsp
       TIter iter = start_iter;
       for(int i=0;iter != end_iter;++i,++iter)
         x.push_back(i);
-      return fitPolynom<typename std::vector<float>::iterator,TIter>(degree,x.begin(),x.end(),start_iter,end_iter,result,chisq);
+      return fitPolynom<typename std::vector<float>::iterator,TIter,TResult>(degree,x.begin(),x.end(),start_iter,end_iter,result,chisq);
     }
     
-  template<typename TIter>
-    bool fitPolynom(int degree, TIter start_iter,
-        TIter end_iter,
-        std::vector<double> &result,double &chisq)
-    {
-      //generate x vector
-      std::vector<double> x;
-      TIter iter = start_iter;
-      for(int i=0;iter != end_iter;++i,++iter)
-        x.push_back(i);
-      return fitPolynom<typename std::vector<double>::iterator,TIter>(degree,x.begin(),x.end(),start_iter,end_iter,result,chisq);
-    }
-
   //calculates the coefficients of a polynomial which is derivation of the given polynomial
   //the given coefficients must sorted in ascending order (highest order last)
   template<typename TIter1,typename TIter2>
