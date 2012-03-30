@@ -140,5 +140,21 @@ namespace dsp
         gsl_poly_complex_workspace_free (w);
     }
 
+    //calculates the value of a polynomial on a given position
+    //coefficients order is from lowest to highest
+    double calcPolyVal(const std::vector<double> &coefficients,double position)
+    {
+        if(coefficients.empty())
+            throw std::runtime_error("calcPolyVal: No coefficients are given!");
+
+        double result = 0;
+        double temp = 1;
+        std::vector<double>::const_iterator iter = coefficients.begin();
+        for(;iter != coefficients.end();++iter,temp = temp*position)
+            result += temp*(*iter);
+
+        return result;
+    }
+
 };
 #endif

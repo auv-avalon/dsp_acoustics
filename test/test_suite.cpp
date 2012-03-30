@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(test_moving_average_filter)
     //this should be equivalent to window_size of 1 and should therefore change nothing 
     dsp::movingAverageFilterSym<iterator,iterator,unsigned int>(values.begin(),values.end(),result.begin(),2);
     BOOST_CHECK_EQUAL(result.size(),values.size());
-    for(int i=0;i < result.size();++i)
+    for(unsigned int i=0;i < result.size();++i)
         BOOST_CHECK_EQUAL(result[i], values[i]);
 
     //applying a window of 5
@@ -315,6 +315,20 @@ BOOST_AUTO_TEST_CASE(test_calc_poly_roots)
   BOOST_CHECK(result[1] == 0.0);
   BOOST_CHECK(result[2] == -3.0);
   BOOST_CHECK(result[3] == 0.0);
+}
+
+//test if calculation of the roots is working
+BOOST_AUTO_TEST_CASE(test_calc_poly_val)
+{
+  std::vector<double> values;
+  //-6+2x+x^2 
+  values.push_back(-6);
+  values.push_back(2);
+  values.push_back(1);
+
+  BOOST_CHECK_EQUAL(-6,dsp::calcPolyVal(values,0));
+  BOOST_CHECK_EQUAL(-3,dsp::calcPolyVal(values,1));
+  BOOST_CHECK_EQUAL(2,dsp::calcPolyVal(values,2));
 }
 
 //test if polynomial fit is working
