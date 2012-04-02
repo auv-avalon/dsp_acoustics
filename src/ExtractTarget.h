@@ -30,12 +30,12 @@ namespace dsp
             InputIterator iter_right = first;
             InputIterator iter_middle = first;
             InputIterator iter_left = first;
-            for(int i=0;i < size;++iter_right,++i)
+            for(int i=0;i < size && iter_right != last;++iter_right,++i)
                 left_value-= *iter_right;
 
             iter_middle = iter_right;
 
-            for(int i=0;i < size;++iter_right,++i)
+            for(int i=0;i < size && iter_right != last;++iter_right,++i)
                 right_value += *iter_right;
 
             temp.push_back(left_value+right_value);
@@ -61,6 +61,8 @@ namespace dsp
 
             index = iter_max-temp.begin()+size;
             length = iter_min - temp.begin()-index+size;
+            if(length <0)
+                length = 0;
         }
 };
 
