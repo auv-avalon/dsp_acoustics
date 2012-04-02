@@ -85,8 +85,8 @@ namespace dsp
                         std::vector<base::samples::SonarBeam>::iterator end = sonar_beams.begin()+current_index+1;
                         for(;iter != end;++iter)
                         {   
-                            //protect against overwriting sonar beams
-                            if(sonar_scan.hasSonarBeam(*iter))
+                            //protect against overwriting sonar beams (only at the start and end it is allowed)
+                            if(sonar_scan.hasSonarBeam(*iter) && iter != sonar_beams.begin()+1 && iter+1 != end)
                                 throw std::runtime_error("addSonarBeam: multiple SonarBeams were added which are overwriting each other!");
                             sonar_scan.addSonarBeam(*iter,false);
                         }
