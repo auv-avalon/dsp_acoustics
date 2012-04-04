@@ -20,8 +20,10 @@ namespace dsp
     // size = left|right size of the operator window size*2 must be smaller than the number of the elements 
     // index = variable used for storing the extracted position
     // length = variable usde for storing the extracted length 
+    //
+    // returns the temoprary vector used to extract the target 
     template<class InputIterator,class AccumulatorType>
-        void extractTarget(InputIterator first,InputIterator last, const int size ,int &index,int &length)
+        std::vector<AccumulatorType> extractTarget(InputIterator first,InputIterator last, const int size ,int &index,int &length)
         {
             std::vector<AccumulatorType> temp;
             AccumulatorType left_value = 0;
@@ -63,6 +65,7 @@ namespace dsp
             length = iter_min - temp.begin()-index+size;
             if(length <0)
                 length = 0;
+            return temp;
         }
 };
 

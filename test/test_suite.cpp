@@ -315,6 +315,17 @@ BOOST_AUTO_TEST_CASE(test_calc_poly_roots)
   BOOST_CHECK(result[1] == 0.0);
   BOOST_CHECK(result[2] == -3.0);
   BOOST_CHECK(result[3] == 0.0);
+
+  values.clear();
+  result.clear();
+  values.push_back(-5.84);
+  values.push_back(90.36);
+  values.push_back(-80.665);
+  values.push_back(27.3567);
+  values.push_back(-4.43239);
+  values.push_back(0.343546);
+  values.push_back(-0.0102124);
+  BOOST_CHECK_EQUAL(0,result.size());
 }
 
 //test if calculation of the roots is working
@@ -659,7 +670,7 @@ BOOST_AUTO_TEST_CASE(test_extract_target)
     index = 0;
     dsp::extractTarget<std::vector<unsigned char>::const_iterator,int>(values.begin()+12,values.end(),10,index,length);
     std::cout << index << " " << length << std::endl;
-    BOOST_CHECK_EQUAL(index,6);
-    BOOST_CHECK_EQUAL(length,7);
+    BOOST_CHECK_EQUAL(index,27);
+    BOOST_CHECK_EQUAL(length,16);
 }
 

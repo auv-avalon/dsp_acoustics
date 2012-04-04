@@ -7,3 +7,5 @@ include($ENV{ROCK_CMAKE_MACROS}/Rock.cmake)
 rock_init(dsp_acoustics 0.1)
 rock_standard_layout()
 
+ADD_SUBDIRECTORY(bindings)
+
