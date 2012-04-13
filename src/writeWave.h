@@ -7,16 +7,13 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-                        
+
 class WriteWave{
-    
-    public:
+public:
     WriteWave(const int samplerate, const int channels,const char *filename);
     ~WriteWave();
     void write(const float* data, size_t length );
-    protected:
-       
-     SndfileHandle outfile;  
+protected:
+    SndfileHandle outfile;
 };
-
 #endif

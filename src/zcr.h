@@ -18,8 +18,8 @@ unsigned int zeroCrossingRate( T* data , unsigned int size)  {
     T* end = data+size;
     T* start = data;
     T val = *data;
-    for(;start != end;  ){
-        ++start;
+    for(;start != end; ++start)
+    {
         ret += (val * (*start) < 0 );
         val = (*start);
     }
