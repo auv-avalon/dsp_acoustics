@@ -61,10 +61,13 @@ namespace dsp
             typename std::vector<AccumulatorType >::iterator iter_max;
             iter_max = std::max_element(temp.begin(),temp.end());
 
-            index = iter_max-temp.begin()+size;
-            length = iter_min - temp.begin()-index+size;
+            index = iter_max-temp.begin()-1;
+            length = iter_min - temp.begin()-index+2;
             if(length <0)
                 length = 0;
+            //TODO 
+            //calc the phase shift 
+            index += size/std::max(1,size-length)-1;
             return temp;
         }
 };
