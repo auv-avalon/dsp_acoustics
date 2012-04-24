@@ -1,7 +1,8 @@
 #include "xcorr.h"
-#include <assert.h>
 #include <math.h>
-#include <string.h>
+
+namespace dsp
+{
 
 Xcorr::Xcorr(unsigned int signalSize):_signalSize(signalSize)
 {
@@ -106,4 +107,6 @@ int Xcorr::calculate(const fftw_data_type *ref,const fftw_data_type *sig)
 
     _correlation = ( max /_signalSize) /  (sqrt(na) * sqrt(nb));
     return _lag;
+}
+
 }
