@@ -22,8 +22,9 @@ namespace dsp
         T val = *data;
         for(;start != end; ++start)
         {
-            ret += (val * (*start) < 0 );
-            val = (*start);
+            ret += (val * (*start) < 0);
+            if(*start != 0.0)
+                val = (*start);
         }
         return ret;
     }
