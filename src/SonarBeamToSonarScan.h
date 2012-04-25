@@ -86,8 +86,8 @@ namespace dsp
                         for(;iter != end;++iter)
                         {   
                             //protect against overwriting sonar beams (only at the start and end it is allowed)
-                            if(sonar_scan.hasSonarBeam(*iter) && iter != sonar_beams.begin()+1 && iter+1 != end)
-                                throw std::runtime_error("addSonarBeam: multiple SonarBeams were added which are overwriting each other!");
+                            //if(sonar_scan.hasSonarBeam(*iter) && iter != sonar_beams.begin()+1 && iter+1 != end)
+                            //    throw std::runtime_error("addSonarBeam: multiple SonarBeams were added which are overwriting each other!");
                             sonar_scan.addSonarBeam(*iter,false);
                         }
 

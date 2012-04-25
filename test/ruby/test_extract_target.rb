@@ -8,7 +8,7 @@ rescue LoadError => e
 end
 
 
-result = File.open("target_sonar3.yml","r") do |io|
+result = File.open("target_sonar6.yml","r") do |io|
             YAML.load(io.read)
          end
 beam = if result.is_a?(Hash)
