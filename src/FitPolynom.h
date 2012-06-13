@@ -1,3 +1,7 @@
+///////////////////////////////
+// DO NOT USE THIS VERSION !!!
+// USE THE ONE FROM base/numeric 
+///////////////////////////////
 
 #ifndef __FITPOLYNOM_H 
 #define __FITPOLYNOM_H
