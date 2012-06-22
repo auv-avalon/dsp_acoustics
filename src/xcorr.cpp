@@ -1,5 +1,6 @@
 #include "xcorr.h"
 #include <math.h>
+#include "GraphUtils.h"
 
 namespace dsp
 {
@@ -34,7 +35,7 @@ Xcorr::~Xcorr()
     fftw_free( _ifft_result );
 }
 
-int Xcorr::calculate(const fftw_data_type *ref,const fftw_data_type *sig)
+int Xcorr::calculate(const fftw_data_type *ref,const fftw_data_type *sig, bool show_debug)
 {
     double na=0;
     // not optimmal but well, will maybe optimiezed in the future..
@@ -54,16 +55,27 @@ int Xcorr::calculate(const fftw_data_type *ref,const fftw_data_type *sig)
     fftw_execute( _plan_forward1 );
     fftw_execute( _plan_forward2);
 
-    //complex conjugate.... one signal...
-    /*
-    for(unsigned int i = 0 ; i < _signalSize; i++ )
+    if(show_debug)
     {
-        cout<<"fft 1:" <<_fft_result1[i][0] <<"    "<<_fft_result1[i][1]<<"\n";
-        cout<< "fft 2:" << _fft_result2[i][0] <<"    "<<_fft_result2[i][1]<<"\n";
-        _fft_result2[i][1] *=-1;
+        std::vector<float> a_r1(_signalSize);
+        std::vector<float> b_r1(_signalSize);
+        std::vector<float> a_r2(_signalSize);
+        std::vector<float> b_r2(_signalSize);
+        for(unsigned int i = 0 ; i < _signalSize; i++ )
+        {
+            a_r1[i] = _fft_result1[i][0];
+            b_r1[i] = _fft_result1[i][1];
+            a_r2[i] = _fft_result2[i][0];
+            b_r2[i] = _fft_result2[i][1];
+            //std::cout<<"fft 1: " <<_fft_result1[i][0] <<"    "<<_fft_result1[i][1]<<"\n";
+            //std::cout<< "fft 2: " << _fft_result2[i][0] <<"    "<<_fft_result2[i][1]<<"\n";
+        }
+        showFloatGraph("a anteil result 1", a_r1.data(), _signalSize);
+        showFloatGraph("b anteil result 1", b_r1.data(), _signalSize);
+        showFloatGraph("a anteil result 2", a_r2.data(), _signalSize);
+        showFloatGraph("b anteil result 2", b_r2.data(), _signalSize);
     }
-    */
-
+    
     // multiply them...
     for(unsigned int i = 0 ; i < _signalSize; i++ ) {
         _fft_result2[i][1] *=-1; // complex conejugat
@@ -83,7 +95,20 @@ int Xcorr::calculate(const fftw_data_type *ref,const fftw_data_type *sig)
         _ifft_result[i][1] /= _signalSize;
     }
     */
-
+    
+    if(show_debug)
+    {
+        std::vector<float> a_rf(_signalSize);
+        std::vector<float> b_rf(_signalSize);
+        for(unsigned int i = 0 ; i < _signalSize; i++ )
+        {
+            a_rf[i] = _ifft_result[i][0];
+            b_rf[i] = _ifft_result[i][1];
+        }
+        showFloatGraph("a anteil result final", a_rf.data(), _signalSize);
+        showFloatGraph("b anteil result final", b_rf.data(), _signalSize,0);
+    }
+    
     // search max...
     double max =_ifft_result[0][0];
     unsigned int index =0;
