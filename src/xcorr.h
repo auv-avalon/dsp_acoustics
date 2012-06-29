@@ -26,7 +26,7 @@ namespace dsp
     public:
         Xcorr(unsigned int signalSize);
         ~Xcorr();
-        int calculate(const fftw_data_type *ref,const fftw_data_type *sig, bool show_debug = false);
+        int calculate(const fftw_data_type *ref,const fftw_data_type *sig);
         double getCorrelation(){return _correlation;};
     protected:
         unsigned int _signalSize;
