@@ -1,13 +1,8 @@
 #include "bandpass.h"
 #include <math.h>
-#include "GraphUtils.h"
 
 #include <stdio.h>
 #include <string.h>
-
-#define SampleRate 44100
-#define Freq 15000
-#define Freqrange 100
 
 namespace dsp
 {
@@ -48,42 +43,39 @@ Bandpass::~Bandpass()
     fftw_free( _ifft_result2 );
 }
 
-Bandpass::returnS Bandpass::calculate(const fftw_data_type *ref,const fftw_data_type *sig)
+Bandpass::returnS Bandpass::calculate(const fftw_data_type *ref,const fftw_data_type *sig, int sampleRate, int freq, int freqtolerance)
 {
-    double na=0;
     // not optimmal but well, will maybe optimiezed in the future..
     for(unsigned int i = 0 ; i < _signalSize; i++ )
     {
         _data1[i][0] = ref[i];
         _data1[i][1] = 0.0;
-        na += ref[i] *ref[i];
     }
-    double nb=0;
     for(unsigned int i = 0 ; i < _signalSize; i++ )
     {
         _data2[i][0] = sig[i];
         _data2[i][1] = 0.0;
-         nb += sig[i] *sig[i];
     }
     
     fftw_execute( _plan_forward1 );
     fftw_execute( _plan_forward2);
 
-    int chunk_size = (SampleRate/2) / _signalSize;
+    int chunk_size = (sampleRate/2) / _signalSize;
     
     for(unsigned int i = 0 ; i < _signalSize; i++ )
     {
-        if ((i + 1) * chunk_size < Freq - Freqrange && (i + 1) * chunk_size > Freq + Freqrange )
-        _fft_result1[i][0] = 0.0;
-        _fft_result1[i][1] = 0.0;
-        
-        _fft_result2[i][0] = 0.0;
-        _fft_result2[i][1] = 0.0;
+        if ((i + 1) * chunk_size < freq - freqtolerance && (i + 1) * chunk_size > freq + freqtolerance )
+        {
+            _fft_result1[i][0] = 0.0;
+            _fft_result1[i][1] = 0.0;
+            
+            _fft_result2[i][0] = 0.0;
+            _fft_result2[i][1] = 0.0;
+        }
     }
 
     fftw_execute( _plan_backward1 );
     fftw_execute( _plan_backward2 );
-    
 
     returnS ret;
     memcpy(ret._ifft_result1, _ifft_result1, _signalSize);

@@ -1,5 +1,5 @@
-#ifndef XCORR_H
-#define XCORR_H
+#ifndef BANDPASS_H
+#define BANDPASS_H
 
 #include <fftw3.h>
 
@@ -30,7 +30,7 @@ public:
 
     Bandpass(unsigned int signalSize);
     ~Bandpass();
-    returnS calculate(const fftw_data_type *ref,const fftw_data_type *sig);
+    returnS calculate(const fftw_data_type *ref,const fftw_data_type *sig, int sampleRate, int freq, int freqtolerance);
     double getCorrelation(){return _correlation;};
 protected:
     unsigned int _signalSize;
