@@ -25,7 +25,7 @@ namespace dsp
 class Bandpass{
 public:
     struct returnS {
-        float *_ifft_result1, *_ifft_result2;
+        fftw_complex *_ifft_result1, *_ifft_result2;
     };
 
     Bandpass(unsigned int signalSize);

@@ -78,8 +78,8 @@ Bandpass::returnS Bandpass::calculate(const fftw_data_type *ref,const fftw_data_
     fftw_execute( _plan_backward2 );
 
     returnS ret;
-    memcpy(ret._ifft_result1, _ifft_result1, _signalSize);
-    memcpy(ret._ifft_result2, _ifft_result2, _signalSize);
+    ret._ifft_result1 = _ifft_result1;
+    ret._ifft_result2 = _ifft_result2;
 
     return ret;
 }
