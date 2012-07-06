@@ -68,7 +68,7 @@ void Bandpass::calculate(std::vector<float> *ref,std::vector<float> *sig, int sa
     
     for(unsigned int i = 0 ; i < _signalSize; i++ )
     {
-        if ((i + 1) * chunk_size < freq - freqtolerance && (i + 1) * chunk_size > freq + freqtolerance )
+        if (((i + 1) * chunk_size) < (freq - freqtolerance) || ((i + 1) * chunk_size) > (freq + freqtolerance) )
         {
             _fft_result1[i][0] = 0.0;
             _fft_result1[i][1] = 0.0;
