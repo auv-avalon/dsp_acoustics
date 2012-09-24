@@ -10,4 +10,6 @@
  <depend package="libsnd" />
  <depend package="opencv" />
  <depend package="gsl" />
+ <depend package="gsl" />
+ <depend package="base/types" />
 </package>
