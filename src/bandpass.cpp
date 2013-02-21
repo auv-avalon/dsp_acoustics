@@ -49,16 +49,27 @@ Bandpass::~Bandpass()
 
 void Bandpass::calculate(std::vector<float> *ref,std::vector<float> *sig, int sampleRate, int freq, int freqtolerance)
 {
-    // not optimmal but well, will maybe optimiezed in the future..
-    for(unsigned int i = 0 ; i < _signalSize; i++ )
-    {
-        _data1[i][0] = ref->at(i);
-        _data1[i][1] = 0.0;
+    if(ref->size() == sig->size()) {
+        for(unsigned int i = 0 ; i < _signalSize; i++ ) {
+            _data1[i][0] = ref->at(i);
+            _data1[i][1] = 0.0;
+            
+            _data2[i][0] = sig->at(i);
+            _data2[i][1] = 0.0;
+        }
     }
-    for(unsigned int i = 0 ; i < _signalSize; i++ )
-    {
-        _data2[i][0] = sig->at(i);
-        _data2[i][1] = 0.0;
+    else {
+        // not optimmal but well, will maybe optimiezed in the future..
+        for(unsigned int i = 0 ; i < _signalSize; i++ )
+        {
+            _data1[i][0] = ref->at(i);
+            _data1[i][1] = 0.0;
+        }
+        for(unsigned int i = 0 ; i < _signalSize; i++ )
+        {
+            _data2[i][0] = sig->at(i);
+            _data2[i][1] = 0.0;
+        }
     }
     
     fftw_execute( _plan_forward1 );
@@ -70,6 +81,7 @@ void Bandpass::calculate(std::vector<float> *ref,std::vector<float> *sig, int sa
     {
         if (((i + 1) * chunk_size) < (freq - freqtolerance) || ((i + 1) * chunk_size) > (freq + freqtolerance) )
         {
+            //printf("BANDPASS DEBUG SETTING FREQUENZY '%-5f' WITH VALUE '%-8f' TO ZERO! i: %d\n", freq, ((i + 1) * chunk_size), i);
             _fft_result1[i][0] = 0.0;
             _fft_result1[i][1] = 0.0;
             
