@@ -3,6 +3,7 @@
 
 #include <fftw3.h>
 #include <vector>
+#include <iostream>
 
 namespace dsp
 {
@@ -32,7 +33,9 @@ public:
     Bandpass(unsigned int signalSize);
     ~Bandpass();
     void calculate(std::vector<float> *ref,std::vector<float> *sig, int sampleRate, int freq, int freqtolerance);
-    double getCorrelation(){return _correlation;};
+    
+    double getCorrelation() { return _correlation; };
+    int getSignalSize() { return _signalSize; };
 protected:
     unsigned int _signalSize;
     int _lag;

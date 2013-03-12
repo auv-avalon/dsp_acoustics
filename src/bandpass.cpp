@@ -19,10 +19,10 @@ Bandpass::Bandpass(unsigned int signalSize):_signalSize(signalSize)
     _ifft_result1 = ( fftw_complex* ) fftw_malloc( sizeof( fftw_complex ) * signalSize );
     _ifft_result2 = ( fftw_complex* ) fftw_malloc( sizeof( fftw_complex ) * signalSize );
 
-    _plan_forward1  = fftw_plan_dft_1d( signalSize, _data1, _fft_result1, FFTW_FORWARD, FFTW_ESTIMATE );
-    _plan_forward2  = fftw_plan_dft_1d( signalSize, _data2, _fft_result2, FFTW_FORWARD, FFTW_ESTIMATE );
-    _plan_backward1 = fftw_plan_dft_1d( signalSize, _fft_result1, _data1, FFTW_BACKWARD, FFTW_ESTIMATE );
-    _plan_backward2 = fftw_plan_dft_1d( signalSize, _fft_result2, _data2, FFTW_BACKWARD, FFTW_ESTIMATE );
+    _plan_forward1  = fftw_plan_dft_1d( signalSize, _data1, _fft_result1, FFTW_FORWARD, FFTW_MEASURE);//FFTW_ESTIMATE );
+    _plan_forward2  = fftw_plan_dft_1d( signalSize, _data2, _fft_result2, FFTW_FORWARD, FFTW_MEASURE );
+    _plan_backward1 = fftw_plan_dft_1d( signalSize, _fft_result1, _data1, FFTW_BACKWARD, FFTW_MEASURE );
+    _plan_backward2 = fftw_plan_dft_1d( signalSize, _fft_result2, _data2, FFTW_BACKWARD, FFTW_MEASURE );
 }
 
 Bandpass::~Bandpass()
@@ -50,7 +50,7 @@ Bandpass::~Bandpass()
 void Bandpass::calculate(std::vector<float> *ref,std::vector<float> *sig, int sampleRate, int freq, int freqtolerance)
 {
     if(ref->size() == sig->size()) {
-        for(unsigned int i = 0 ; i < _signalSize; i++ ) {
+        for(unsigned int i = 0 ; i < ref->size(); i++ ) {
             _data1[i][0] = ref->at(i);
             _data1[i][1] = 0.0;
             
@@ -75,13 +75,12 @@ void Bandpass::calculate(std::vector<float> *ref,std::vector<float> *sig, int sa
     fftw_execute( _plan_forward1 );
     fftw_execute( _plan_forward2);
 
-    int chunk_size = (sampleRate/2) / _signalSize;
+    double chunk_size = (sampleRate/2) / _signalSize;
     
     for(unsigned int i = 0 ; i < _signalSize; i++ )
     {
         if (((i + 1) * chunk_size) < (freq - freqtolerance) || ((i + 1) * chunk_size) > (freq + freqtolerance) )
         {
-            //printf("BANDPASS DEBUG SETTING FREQUENZY '%-5f' WITH VALUE '%-8f' TO ZERO! i: %d\n", freq, ((i + 1) * chunk_size), i);
             _fft_result1[i][0] = 0.0;
             _fft_result1[i][1] = 0.0;
             
@@ -92,5 +91,11 @@ void Bandpass::calculate(std::vector<float> *ref,std::vector<float> *sig, int sa
 
     fftw_execute( _plan_backward1 );
     fftw_execute( _plan_backward2 );
+    
+    //save data
+    for(unsigned int i = 0; i < ref->size(); i++) {
+        ref->at(i) = _data1[i][0];
+        sig->at(i) = _data2[i][0];
+    }
 }
 }
