@@ -1,4 +1,5 @@
-include($ENV{ROCK_CMAKE_MACROS}/RockRuby.cmake)
+find_package(Rock)
+include(RockRuby)
 
 IF(RUBY_EXTENSIONS_AVAILABLE)
     execute_process(RESULT_VARIABLE SWIG_RESULT WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/bindings COMMAND swig -c++ -ruby ${PROJECT_NAME}.i)
